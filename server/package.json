@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-     "start": "node cluster.js",
-  "dev": "nodemon cluster.js"
+    "start": "node cluster.js",
+    "dev": "nodemon cluster.js"
   },
   "author": "",
   "license": "ISC",

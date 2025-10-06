@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import axios from 'axios'
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 const Dashboard = () => {
   const styles = {
     navbar: {
@@ -41,7 +42,7 @@ const data = JSON.parse(localStorage.getItem("login"));
 console.log(data, '-----')
 
   const navigate = useNavigate();
-
+ const token = localStorage.getItem("token"); 
 
 const logout=async(e)=>{
     e.preventDefault();
@@ -124,6 +125,7 @@ console.log(users, 'users----->')
     fetchTasks();
     fetchUsers();
   }, []);
+   if (!token) return <Navigate to="/" />;
   return (
     <div>
       <nav style={styles.navbar}>

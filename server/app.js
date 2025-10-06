@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express =require('express')
 const app=express()
+const helmet = require('helmet');
 const redisClient=require('./config/redis')
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -46,6 +47,7 @@ mongoose.connect(process.env.MONGO_URI, {
 const cors=require('cors')
 const Port=process.env.PORT || 5500
 app.use(express.json())
+app.use(helmet());
 const userRouter=require('./routes/user.routes')
 const taskRouter=require('./routes/task.router');
 const { version } = require("os");
