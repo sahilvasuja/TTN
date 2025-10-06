@@ -1,0 +1,24 @@
+version: "3.9"
+services:
+  server-backend:
+    build: .
+    container_name: server-backend
+    ports:
+      - "5500:5500"
+    volumes:
+      - .:/usr/src/app           # Mount your project folder to container
+      - /usr/src/app/node_modules
+    environment:
+      - PORT=5500
+      - MONGO_URI=mongodb://host.docker.internal:27017/fullStack
+      - JWT_SECRET=secretKey
+      - REDIS_HOST=myredis
+      - REDIS_PORT=6379
+    depends_on:
+      - myredis
+
+  myredis:
+    image: redis:latest
+    container_name: myredis
+    ports:
+      - "6379:6379"
