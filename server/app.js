@@ -7,7 +7,33 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
 
-
+const options= {
+  definition: {
+    openapi: "3.0.0",
+    info:{
+      title: "FullStack",
+      version: "1.0.0",
+      description: "Api documentation"
+    },
+     components: {
+    securitySchemes: {
+      bearerAuth: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+  },
+    servers: [
+      {
+        url:  "http://localhost:5500",
+      }
+    ]
+  },
+  apis: ["./routes/*.js"]
+}
+const specs=swaggerJsdoc(options)
+app.use('/api/docs',swaggerUi.serve,swaggerUi.setup(specs))
 const mongoose=require('mongoose')
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -21,7 +47,8 @@ const cors=require('cors')
 const Port=process.env.PORT || 5500
 app.use(express.json())
 const userRouter=require('./routes/user.routes')
-const taskRouter=require('./routes/task.router')
+const taskRouter=require('./routes/task.router');
+const { version } = require("os");
 app.use(cors())
 app.get('/', (req,res)=>{
     const data=req.body
