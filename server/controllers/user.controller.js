@@ -1,8 +1,12 @@
 const User=require('../models/usermodel')
 const bcrypt=require('bcrypt')
-const jwt=require('jsonwebtoken')
+const jwt=require('jsonwebtoken');
+const { validateResigter } = require('../userValidation');
 exports.createUser=async(req,res)=>{
+      const { error } = validateResigter(req.body);
+  if (error) return res.status(400).json({ error: error.details[0].message });
     const {name,email,password}=req.body
+
     const user=await User.findOne({email})
     if(user){
         res.status(401).json('user already exist')
@@ -21,7 +25,8 @@ exports.createUser=async(req,res)=>{
 
 exports.logout=async(req,res)=>{
     try{
-
+        console.log(req, '------->')
+// res.json(req.user, 'logout')
         req.user.Token=req.user.Token.filter((t)=>t.token!=req.token)
         await req.user.save()
         res.json({ message: "Logout successful" });
@@ -57,7 +62,7 @@ exports.loginUser=async(req,res)=>{
               res.status(400).json({error:"password doen't match"})
         }
         
-        const token=jwt.sign({id:user._id, email: user.email, role: user.role}, process.env.JWT_SECRET,{expiresIn:'1h'})
+        const token=jwt.sign({id:user._id, email: user.email, role: user.role}, process.env.JWT_SECRET)
          user.Token.push({ token });
         await user.save()
         const {email,Token,role, name}= user

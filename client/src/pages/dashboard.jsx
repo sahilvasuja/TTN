@@ -49,7 +49,7 @@ const logout=async(e)=>{
     const removeToken=data?.data?.Token[0]?.token
     console.log(removeToken, '--->')
     try{
-        const data=await axios.post("http://localhost:5500/user/logout", {
+        const data=await axios.post("http://localhost:5500/user/logout",{}, {
             headers: {
                   Authorization: `Bearer ${removeToken}`
             }
@@ -58,6 +58,8 @@ const logout=async(e)=>{
         )
         console.log(data.data, '----------------------->>>'); 
     localStorage.removeItem("login"); 
+    
+    localStorage.removeItem("token");
     navigate('/')
     }
     catch(err){
@@ -76,13 +78,13 @@ const logout=async(e)=>{
         const payload = { title: task };
     console.log("Form submitted:", task);
   if (user.role === "admin" && assignedUser) payload.assignedTo = assignedUser;
+  console.log(user.role, assignedUser,payload,'assssssssssssssssss')
     try {
    const token = localStorage.getItem("token");
    console.log(token , 'token------')
+   console.log(token, "TOKEN BEFORE SENDING"); 
       const res = await axios.post("http://localhost:5500/task/add",  payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,  
-        },
+         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(res.data);
       setTask(" ");
@@ -126,6 +128,30 @@ console.log(users, 'users----->')
     fetchUsers();
   }, []);
    if (!token) return <Navigate to="/" />;
+
+
+ const handleAllUsers = () => {
+    navigate("/allusers");
+  };
+
+   console.log(tasks, 'taskkkkkkkkkkkkkkkk')
+
+const handleDelete=async(id)=>{
+ const token = localStorage.getItem("token");
+ console.log(id, token ,'delete client')
+ try{
+
+   const res = await axios.post(`http://localhost:5500/task/deletetask/${id}`,{},{
+     headers: { Authorization: `Bearer ${token}` },
+   });
+    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+   console.log(res, 'from develte')
+ }
+ catch(err){
+  console.log(err.message)
+ }
+}
+
   return (
     <div>
       <nav style={styles.navbar}>
@@ -163,13 +189,14 @@ console.log(users, 'users----->')
        </form>
       </div>
         {
-          user?.role === "admin" ?   <h3>All Tasks</h3>:   <h3>Your Tasks</h3>
+          user?.role === "admin" ? <> <button onClick={handleAllUsers}>View All Users</button> <h3>All Tasks</h3></>  :   <h3>Your Tasks</h3>
         }
     
       <ul>
         {tasks.map((t) => (
-          <li key={t._id}>
-            {t.title} 
+          <li key={t._id} style={{display:"flex", gap:'8px', alignItems: 'center'}}>
+        { ` ${t.owner.name} ----- ${t.title} `}
+        <button onClick={()=>handleDelete(t._id)}>delete task</button>
           </li>
         ))}
       </ul>

@@ -51,7 +51,14 @@ app.use(helmet());
 const userRouter=require('./routes/user.routes')
 const taskRouter=require('./routes/task.router');
 const { version } = require("os");
-app.use(cors())
+// app.use(cors())
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"], // ✅ add Authorization here
+  })
+);
 app.get('/', (req,res)=>{
     const data=req.body
     res.json(data)

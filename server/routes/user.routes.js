@@ -3,7 +3,7 @@ const express=require('express')
 const router=express.Router()
 const userController  = require('../controllers/user.controller')
 const loginLimiter=require('../middleware/rateLimiter')
-const { auth } = require('../middleware/auth')
+const { auth, isAdmin } = require('../middleware/auth')
 
 /**
  * @swagger
@@ -72,7 +72,7 @@ router.post("/login",loginLimiter, userController?.loginUser)
  *       200:
  *         description: Logged out successfully
  */
-router.post("/logout", userController?.logout)
+router.post("/logout", auth,userController?.logout)
 /**
  * @swagger
  * /user/allUser:
@@ -83,7 +83,7 @@ router.post("/logout", userController?.logout)
  *       200:
  *         description: List of all users
  */
-router.get("/allUser", userController?.allUser)
+router.get("/allUser",auth, isAdmin, userController?.allUser)
 /**
  * @swagger
  * /user/logoutAll:

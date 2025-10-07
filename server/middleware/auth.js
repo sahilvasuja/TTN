@@ -1,10 +1,18 @@
 const jwt=require('jsonwebtoken')
 const User =require('../models/usermodel')
 exports.auth=async(req,res,next)=>{
-      const token =req.header('Authorization').replace("Bearer", "").trim()
+    console.log( req.header('Authorization'))
+    // const authHeader = req.header("Authorization");
+    
+      const authHeader = req.header('Authorization');
+        console.log(authHeader, 'authheaderrrrrrrrrrrrrrrr')
+    if (!authHeader) {
+      return res.status(401).json({ error: req.header });
+    }
+      const token =authHeader.replace("Bearer", "").trim()
    
       const decoded=jwt.verify(token, process.env.JWT_SECRET)
-      console.log(req, 'auth')
+      console.log(req,token, 'auth')
    try{
     
     const token =req.header('Authorization').replace("Bearer", "").trim()
@@ -23,7 +31,8 @@ exports.auth=async(req,res,next)=>{
 }
 
 exports.isVerified=(req,res,next)=>{
-   
+    
+   console.log(req, 'isverified')
     if(!req.user){
         return res.status(404).json({message: "Access denied"})
     }

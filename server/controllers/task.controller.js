@@ -1,11 +1,15 @@
 const Task=require('../models/taskmodel')
 const redisClient=require('../config/redis')
+const mongoose=require('mongoose')
 exports.createTask=async(req,res)=>{
  
 
      try {
         let assignedTo=req.user._id
            if (req.user.role === "admin" && req.body.assignedTo) {
+             if (!mongoose.Types.ObjectId.isValid(req.body.assignedTo)) {
+        return res.status(400).json({ error: "Invalid assigned user ID" });
+    }
       assignedTo = req.body.assignedTo;
     }
 
@@ -41,21 +45,38 @@ exports.getMyTasks = async (req, res) => {
         console.log(tasks, 'tasks------')
     try {
         const tasks = await Task.find({ assignedTo: req.user._id }).populate("owner","name email");
-        console.log(tasks, 'tasks------')
+        console.log(tasks, 'taskspopulatw------')
         res.json(tasks);
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
 }
 
+exports.deleteTask=async(req,res)=>{
 
+    try{
+        const del=req.params.id
+        const task = await Task.findByIdAndDelete(del)
+       
+        if (!task) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json({ message: "Task deleted successfully", task });
+      
+    }
+    catch(err){
+         res.status(400).json({ error: err.message });
+    }
+}
 exports.getAllTasks = async (req, res) => { 
     
     try {
          const tasks = await Task.find()
         //  .populate("owner", "email");
-
-        console.log(tasks, 'tasks------')
+     .populate("assignedTo", "name email")  
+       .populate("owner", "name email");
+        console.log(tasks, 'tasksAdmin------')
         res.json(tasks);
     } catch (err) {
         res.status(400).json({ error: err.message });

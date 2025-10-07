@@ -1,6 +1,6 @@
 const express=require('express')
 const taskController = require('../controllers/task.controller')
-const { auth, isVerified } = require('../middleware/auth')
+const { auth, isVerified, isAdmin } = require('../middleware/auth')
 // const auth =require('../middleware/auth')
 const router=express.Router()
 console.log(taskController, 'task---------')
@@ -40,7 +40,7 @@ console.log(taskController, 'task---------')
  *       401:
  *         description: Unauthorized
  */
-router.post('/add',isVerified, auth,taskController.createTask )
+router.post('/add', auth,isVerified,taskController.createTask )
 /**
  * @swagger
  * /task/mytasks:
@@ -55,7 +55,7 @@ router.post('/add',isVerified, auth,taskController.createTask )
  *       401:
  *         description: Unauthorized
  */
-router.get("/mytasks",isVerified, auth, taskController.getMyTasks);
+router.get("/mytasks", auth,isVerified, taskController.getMyTasks);
 
 /**
  * @swagger
@@ -73,4 +73,7 @@ router.get("/mytasks",isVerified, auth, taskController.getMyTasks);
  */
 router.get("/all", auth, taskController.getAllTasks);
 
+
+
+router.post("/deletetask/:id", auth,isAdmin, taskController.deleteTask);
 module.exports=router
